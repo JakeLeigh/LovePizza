@@ -1,35 +1,30 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-
-import Auth from '@okta/okta-vue';
-import Dashboard from '@/components/Dashboard';
-
-Vue.use(Auth, {
-  issuer: 'https://dev-49142339.okta.com/oauth2/default',
-  client_id: '0oa6uun73eGcIxHyZ5d6',
-  redirect_url: 'https://localhost:5001/implicit/callback',
-  scope: 'openid profile email'
-});
+import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
-
-const router = new VueRouter({
-  routes
-});
 
 const routes = [
   {
     path: "/",
-    name: "Dashboard",
-    component: Dashboard,
-    props: true
+    name: "Home",
+    component: Home
   },
   {
-    path: "/implicit/callback",
-    component: Auth.handleCallback()
-  },
+    path: "/about",
+    name: "About",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/About.vue")
+  }
 ];
 
-router.beforeEach(Vue.prototype.$auth.authRedirectGuard())
+const router = new VueRouter({
+  mode: "history",
+  base: process.env.BASE_URL,
+  routes
+});
 
 export default router;
