@@ -1,14 +1,30 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Dashboard from '@/components/Dashboard'
+import { OktaAuth } from '@okta/okta-auth-js'
+import OktaVue from '@okta/okta-vue'
+import {LoginCallback} from '@okta/okta-vue'
 
 Vue.use(VueRouter);
+
+const oktaAuth = new OktaAuth({
+  issuer: 'https://dev-49142339.okta.com/oauth2/default',
+  clientId: '0oa6uun73eGcIxHyZ5d6',
+  redirectUri: window.location.origin + '/login/callback',
+  scopes: ['openid', 'profile', 'email']
+})
+Vue.use(OktaVue, { oktaAuth })
+
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home
+    name: "Dashboard",
+    component: Dashboard
+  },
+  {
+    path: '/implicit/callback',
+    component: LoginCallback
   },
   {
     path: "/about",
@@ -26,5 +42,4 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
-
 export default router;
