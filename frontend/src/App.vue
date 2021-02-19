@@ -1,12 +1,56 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
+    <header>
+      <b-navbar toggleable="md" type="light" variant="light">
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <b-navbar-brand to="/">Love Pizza</b-navbar-brand>
+        <b-collapse is-nav id="nav-collapse">
+          <b-navbar-nav>
+            <b-nav-item href="#" @click.prevent="login" v-if="!user">Login</b-nav-item>
+            <b-nav-item href="#" @click.prevent="logout" v-else>Logout</b-nav-item>
+          </b-navbar-nav>
+        </b-collapse>
+      </b-navbar>
+    </header>
+    <main>
+      <div>
+        Love pizza button and clicks counter here
+      </div>
+    </main>
   </div>
 </template>
+<script>
+export default {
+  name: 'app',
+  data() {
+    return {
+      user: null
+    }
+  },
+  async created() {
+    await this.refreshUser()
+  },
+  watch: {
+    '$route': 'onRouteChange'
+  },
+  methods: {
+    login() {
+      this.$auth.loginRedirect()
+    },
+    async onRouteChange() {
+      await this.refreshUser()
+    },
+    async refreshUser() {
+      this.user = await this.$auth.getUser()
+    },
+    async logout() {
+      await this.$auth.logout()
+      await this.refreshUser()
+      this.$router.push('/')
+    }
+  }
+}
+</script>
 
 <style lang="scss">
 #app {
